@@ -4,5 +4,23 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+library(fivethirtyeight)
+library(tidyverse)
+data('congress_age')
 ```
+
+```{r}
+congress_age_year <- congress_age %>% 
+  mutate(year = format(termstart,'%Y')) %>% 
+  filter(party %in% c('R','D')) %>% 
+  group_by(year,party) %>% 
+  summarize(avg = mean(age))
+
+ggplot(congress_age_year,aes(x = year, y = avg, group = party, color = party)) + 
+  geom_line(size = 1) + 
+  labs(title = 'Average Age Members of Congress', 
+       subtitle = 'At start of term, 1947-2013',
+       source = '538 R Package') 
+```
+
